@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { useRef, useState, useEffect, useCallback } from "react";
 import {
-  Shield, Bot, HeartPulse, GraduationCap, Camera, Layers, Server,
+  Shield, Bot, Factory, HeartPulse, GraduationCap, Camera, Server,
   Globe, Users, TrendingUp, Award, Building2,
   Mail, Phone, MapPin, Menu, X,
   Zap, BarChart3, FileText, Headphones, Mic,
@@ -28,11 +28,6 @@ interface Agent {
   results: string[];
 }
 
-interface Department {
-  name: string;
-  desc: string;
-  icon: React.ElementType;
-}
 
 interface StatProps {
   value: number;
@@ -480,10 +475,10 @@ function Navbar({ onContact }: { onContact: () => void }) {
         {/* Logo */}
         <a href="#" className="flex items-center cursor-pointer">
           <Image
-            src="/logo-white.png"
+            src="/logo.png"
             alt="GlobalKazGroup Technology"
-            width={140}
-            height={56}
+            width={280}
+            height={200}
             className="h-12 w-auto object-contain"
             priority
           />
@@ -659,7 +654,7 @@ function AboutSection() {
             <FadeIn delay={0.1}>
               <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight mb-6">
                 Ведущий IT-интегратор{" "}
-                <span className="text-[#06b6d4]">стран СНГ</span>
+                <span className="text-[#06b6d4]">в Казахстане</span>
               </h2>
             </FadeIn>
             <FadeIn delay={0.2}>
@@ -765,45 +760,45 @@ function AboutSection() {
 const SERVICES: ServiceCard[] = [
   {
     icon: Bot,
-    title: "AI Агенты",
-    desc: "Разработка интеллектуальных AI-агентов для автоматизации бизнес-процессов, обработки обращений, анализа данных и поддержки принятия решений.",
+    title: "Корпоративные ИИ-агенты",
+    desc: "Интеллектуальные помощники для автоматизации документооборота, обработки обращений, аналитики данных и поддержки принятия решений в организациях и государственных учреждениях.",
     color: "#2563eb",
-    tags: ["AI Agents", "LLM", "Автоматизация"],
+    tags: ["AI Agents", "Automation", "Enterprise AI"],
+  },
+  {
+    icon: Factory,
+    title: "Промышленные ИИ-агенты",
+    desc: "ИИ-решения для производственных предприятий, мониторинга оборудования, предиктивной аналитики, контроля процессов и повышения операционной эффективности.",
+    color: "#C9A961",
+    tags: ["Industry 4.0", "Predictive AI", "Manufacturing"],
   },
   {
     icon: HeartPulse,
     title: "Цифровая медицина",
-    desc: "Цифровые платформы для медицинских учреждений, электронные сервисы, медицинская аналитика и решения на базе искусственного интеллекта.",
+    desc: "Комплексные цифровые платформы для медицинских учреждений: электронные сервисы, клиническая аналитика, телемедицина и ИИ-инструменты для поддержки врачебных решений.",
     color: "#06b6d4",
     tags: ["HealthTech", "AI", "Аналитика"],
   },
   {
     icon: GraduationCap,
-    title: "Aiqyn — Цифровое образование",
-    desc: "Современная образовательная экосистема для школ, колледжей и вузов с элементами искусственного интеллекта и цифрового контента.",
+    title: "Цифровое образование",
+    desc: "Экосистема образовательных платформ для школ, колледжей, университетов и детских садов: E-Portfolio, E-Hub, E-Kitaphana и Kindy, обеспечивающие цифровизацию учебного процесса, управление образовательными данными и доступ к современным цифровым сервисам.",
     color: "#8b5cf6",
     tags: ["EdTech", "AI", "Learning"],
   },
   {
     icon: Camera,
     title: "Слаботочные системы и ИИ-видеоаналитика",
-    desc: "Проектирование и внедрение систем видеонаблюдения, контроля доступа, охранных комплексов и интеллектуальной видеоаналитики.",
+    desc: "Проектирование и внедрение систем видеонаблюдения, контроля и управления доступом, охранных комплексов и интеллектуальной видеоаналитики для объектов любой категории.",
     color: "#10b981",
     tags: ["CCTV", "AI Vision", "Безопасность"],
   },
   {
     icon: Server,
     title: "ЦОД и облачная инфраструктура",
-    desc: "Создание и модернизация центров обработки данных, серверной инфраструктуры и облачных платформ корпоративного уровня.",
+    desc: "Проектирование, строительство и модернизация центров обработки данных, серверной и сетевой инфраструктуры, а также внедрение корпоративных облачных платформ.",
     color: "#f59e0b",
     tags: ["Data Center", "Cloud", "Infrastructure"],
-  },
-  {
-    icon: Layers,
-    title: "ERP и цифровизация предприятий",
-    desc: "Внедрение ERP-систем, автоматизация бизнес-процессов и цифровая трансформация государственных и коммерческих организаций.",
-    color: "#C9A961",
-    tags: ["ERP", "Digitalization", "Enterprise"],
   },
 ];
 
@@ -814,11 +809,11 @@ function ServicesSection() {
         <FadeIn className="text-center mb-16">
           <SectionLabel color="blue">Наши услуги</SectionLabel>
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Решения на базе{" "}
-            <span className="text-gradient">искусственного интеллекта</span>
+            Комплексные{" "}
+            <span className="text-gradient">цифровые решения</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Переход от ручных процессов к передовым ИИ-технологиям для государственных и коммерческих организаций
+            Инновационные технологии для цифровой трансформации государственных органов, бизнеса, медицины и образования.
           </p>
         </FadeIn>
 
@@ -904,7 +899,7 @@ const STATS: StatProps[] = [
   { value: 13, suffix: "+", label: "Крупных клиентов", icon: Users },
   { value: 50, suffix: "+", label: "Реализованных проектов", icon: Award },
   { value: 200, suffix: "К+", label: "Пользователей систем", icon: TrendingUp },
-  { value: 9, suffix: "", label: "Построенных дата-центров", icon: Server },
+  { value: 5, suffix: "+", label: "Лет на рынке", icon: Server },
 ];
 
 function StatsSection() {
@@ -925,19 +920,54 @@ function StatsSection() {
 }
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
-const CLIENTS = [
-  "World Bank", "KazAtomProm", "KazakhTelecom", "ЕНПФ",
-  "KazMunayGas", "Baiterek", "KazTransOil", "Transtelecom",
-  "Қазақстан Темір Жолы", "МИД РК", "Минюст РК", "Минобразования РК",
+// To add a client: drop a PNG/SVG into public/clients/ and add an entry below.
+// Use white or light-coloured logos — they display best on the dark background.
+const CLIENTS: { name: string; file: string }[] = [
+  { name: "World Bank",              file: "world-bank.png" },
+  { name: "KazAtomProm",             file: "kazatomprom.png" },
+  { name: "KazakhTelecom",           file: "kazakhtelecom.png" },
+  { name: "ЕНПФ",                    file: "enpf.png" },
+  { name: "KazMunayGas",             file: "kazmunaygas.png" },
+  { name: "Baiterek",                file: "baiterek.png" },
+  { name: "KazTransOil",             file: "kaztransoil.png" },
+  { name: "Transtelecom",            file: "transtelecom.png" },
+  { name: "Қазақстан Темір Жолы",   file: "ktj.png" },
+  { name: "МИД РК",                  file: "mid-rk.png" },
+  { name: "Минюст РК",               file: "minyust-rk.png" },
+  { name: "Минобразования РК",       file: "minobr-rk.png" },
 ];
 
+function ClientLogo({ client, accent }: { client: { name: string; file: string }; accent: string }) {
+  return (
+    <div
+      className="group flex items-center justify-center w-80 h-28 px-8 flex-shrink-0 rounded-2xl border border-white/[0.08] bg-white/[0.04] transition-all duration-200 cursor-default"
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLDivElement).style.borderColor = accent + "66";
+        (e.currentTarget as HTMLDivElement).style.background = accent + "12";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLDivElement).style.borderColor = "";
+        (e.currentTarget as HTMLDivElement).style.background = "";
+      }}
+    >
+      <Image
+        src={`/clients/${client.file}`}
+        alt={client.name}
+        width={240}
+        height={72}
+        className="object-contain h-16 w-auto brightness--70 opacity-80 group-hover:opacity-100 transition-opacity duration-200"
+      />
+    </div>
+  );
+}
+
 function ProjectsSection() {
+  const reversed = [...CLIENTS].reverse();
   return (
     <section id="projects" className="py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d1b2e]/30 to-transparent pointer-events-none" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
 
-        {/* Clients marquee */}
         <FadeIn>
           <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest text-center mb-8">
             Нам доверяют ведущие организации
@@ -949,25 +979,15 @@ function ProjectsSection() {
 
             {/* Row 1 — left to right */}
             <div className="flex gap-3 w-max marquee-fwd">
-              {[...CLIENTS, ...CLIENTS].map((name, i) => (
-                <div
-                  key={i}
-                  className="px-5 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-gray-500 hover:text-white hover:border-[#2563eb]/40 hover:bg-[#2563eb]/8 transition-all duration-200 whitespace-nowrap text-sm font-medium cursor-default"
-                >
-                  {name}
-                </div>
+              {[...CLIENTS, ...CLIENTS].map((c, i) => (
+                <ClientLogo key={i} client={c} accent="#2563eb" />
               ))}
             </div>
 
-            {/* Row 2 — right to left, reversed order */}
+            {/* Row 2 — right to left */}
             <div className="flex gap-3 w-max marquee-rev">
-              {[...[...CLIENTS].reverse(), ...[...CLIENTS].reverse()].map((name, i) => (
-                <div
-                  key={i}
-                  className="px-5 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-gray-500 hover:text-white hover:border-[#06b6d4]/40 hover:bg-[#06b6d4]/8 transition-all duration-200 whitespace-nowrap text-sm font-medium cursor-default"
-                >
-                  {name}
-                </div>
+              {[...reversed, ...reversed].map((c, i) => (
+                <ClientLogo key={i} client={c} accent="#06b6d4" />
               ))}
             </div>
           </div>
@@ -980,42 +1000,42 @@ function ProjectsSection() {
 // ─── AI Agents ────────────────────────────────────────────────────────────────
 const AGENTS: Agent[] = [
   {
-    name: "Compliance Agent",
+    name: "AI Compliance",  
     icon: Shield,
     short: "Контроль стандартов",
     desc: "Автоматизирует контроль соответствия корпоративных документов международным и отраслевым нормам (ISO, ГОСТ, API, ASME) с генерацией стандартных операционных процедур.",
     results: ["Снижение рисков несоответствия на 70%", "Готовность к аудитам 24/7", "Автоматическая генерация СОП"],
   },
   {
-    name: "VoiceNote Agent",
+    name: "AI VoiceNote",
     icon: Mic,
     short: "Протоколы встреч",
     desc: "Первый AI-ассистент для рабочих встреч с полноценной поддержкой русского и других языков. Транскрибация аудио с Teams, Zoom, Google Meet.",
     results: ["Поддержка RU / KZ / UZ / EN", "Структурированные саммари встреч", "Хранение в едином пространстве"],
   },
   {
-    name: "ServiceHub Agent",
+    name: "AI ServiceHub",
     icon: Headphones,
     short: "Автоматизация поддержки",
     desc: "Агент для автоматизации поддержки и обработки запросов в службу поддержки. Чат-бот 24/7, triage тикетов, генерация ответов на частые обращения.",
     results: ["Работа 24/7 без перерывов", "Автоматический triage тикетов", "Снижение нагрузки на 60%"],
   },
   {
-    name: "Signal Agent",
+    name: "AI Signal",
     icon: TrendingUp,
     short: "Мониторинг медиа",
     desc: "Интеллектуальная система мониторинга информационного поля в режиме 24/7. Поиск по ключевым словам, выявление деструктивного контента и угроз.",
     results: ["Мониторинг СМИ и соцсетей", "Выявление угроз безопасности", "Аналитика и отчёты"],
   },
   {
-    name: "LegalHub Agent",
+    name: "AI LegalHub",
     icon: FileText,
     short: "Юридические решения",
     desc: "Агент для обработки жалоб и проверки документов в соответствии с нормативами, законами и технической спецификацией. Проверка договоров.",
     results: ["Проверка договоров", "Сверка с НПА и регламентами", "Подготовка проектов ответов"],
   },
   {
-    name: "Report Generator",
+    name: "AI Reports",
     icon: BarChart3,
     short: "Автогенерация отчётов",
     desc: "Агент для генерации драфтовых и шаблонных PDF-отчётов на основе ваших данных. Интеграция с существующими системами учёта.",
@@ -1033,7 +1053,7 @@ function AgentsSection() {
         <FadeIn className="text-center mb-16">
           <SectionLabel color="blue">AI Агенты</SectionLabel>
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Готовые{" "}
+            Корпоративные {" "}
             <span className="text-gradient">ИИ-агенты</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -1129,78 +1149,6 @@ function AgentsSection() {
   );
 }
 
-// ─── Team ─────────────────────────────────────────────────────────────────────
-const DEPARTMENTS: Department[] = [
-  {
-    name: "B2G/B2B Продажи",
-    desc: "Развитие отношений с МИО, ЦГО и нац. компаниями; сопровождение сделок",
-    icon: TrendingUp,
-  },
-  {
-    name: "Presale",
-    desc: "ТЗ, квалификационные требования, коммерческие предложения, работа с вендорами",
-    icon: Target,
-  },
-  {
-    name: "Отдел закупок",
-    desc: "Участие в торгах на Goszakup, SK.kz, Tizilim, Omarket; конкурсные заявки",
-    icon: FileText,
-  },
-  {
-    name: "Аналитика",
-    desc: "Анализ рыночных потребностей, мониторинг гос. программ, отраслевая экспертиза",
-    icon: BarChart3,
-  },
-  {
-    name: "Эксплуатация",
-    desc: "Монтаж, пусконаладка, техобслуживание и постгарантийная поддержка решений",
-    icon: Settings,
-  },
-  {
-    name: "Юридический отдел",
-    desc: "Юридическое сопровождение контрактов, договоров и проектной документации",
-    icon: Shield,
-  },
-  {
-    name: "Финансовый отдел",
-    desc: "Бухгалтерский учёт, финансовая отчётность, бюджетирование и казначейство",
-    icon: Award,
-  },
-];
-
-function TeamSection() {
-  return (
-    <section id="team" className="py-28 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <FadeIn className="text-center mb-16">
-          <SectionLabel color="cyan">Наша команда</SectionLabel>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Экспертная{" "}
-            <span className="text-[#06b6d4]">команда профессионалов</span>
-          </h2>
-          <p className="text-gray-400 text-lg max-w-xl mx-auto">
-            Каждое направление закрыто профильными специалистами с глубокими знаниями рынка СНГ
-          </p>
-        </FadeIn>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {DEPARTMENTS.map((d, i) => (
-            <FadeIn key={d.name} delay={i * 0.07}>
-              <div className="group p-6 rounded-2xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/[0.14] transition-all duration-300 cursor-default h-full">
-                <div className="w-10 h-10 rounded-xl bg-[#2563eb]/15 border border-[#2563eb]/20 flex items-center justify-center mb-4 group-hover:bg-[#2563eb]/25 transition-colors duration-300">
-                  <d.icon size={18} className="text-[#06b6d4]" />
-                </div>
-                <h3 className="text-white font-semibold text-sm mb-2">{d.name}</h3>
-                <p className="text-gray-500 text-xs leading-relaxed">{d.desc}</p>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── Contact ──────────────────────────────────────────────────────────────────
 function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
@@ -1257,7 +1205,7 @@ function ContactSection() {
             {[
               { icon: MapPin, label: "Адрес", value: "г. Астана, Казахстан" },
               { icon: Mail, label: "Email", value: "info@GlobalKazGroupTechnology.kz" },
-              { icon: Phone, label: "Телефон", value: "+7 (708) 603-23-71" },
+              { icon: Phone, label: "Телефон", value: "+7 (771) 413-34-44" },
             ].map((c) => (
               <div
                 key={c.label}
@@ -1416,7 +1364,7 @@ function Footer() {
           <div>
             <div className="text-white font-semibold text-sm mb-5">Услуги</div>
             <div className="space-y-3">
-              {["AI Агенты", "Цифровой архив", "Видеоаналитика", "Центры данных", "ERP/CRM системы"].map(
+              {["Корпоративные ИИ-агенты", "Промышленные ИИ-агенты", "Цифровая медицина", "Цифровое образование", "Слаботочные системы и ИИ-видеоаналитика", "ЦОД и облачная инфраструктура"].map(
                 (s) => (
                   <a
                     key={s}
@@ -1483,10 +1431,9 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <ServicesSection />
+      <AgentsSection />
       <StatsSection />
       <ProjectsSection />
-      <AgentsSection />
-      <TeamSection />
       <ContactSection />
       <Footer />
     </div>
