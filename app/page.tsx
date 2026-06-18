@@ -1,13 +1,13 @@
 "use client";
 
 import { motion, useInView, AnimatePresence } from "motion/react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import {
   Shield, Database, Video, Server,
   Globe, Users, TrendingUp, Award, Building2,
   Mail, Phone, MapPin, Menu, X,
   Zap, BarChart3, FileText, Headphones, Mic,
-  ArrowRight, ChevronRight, Check, Target, Settings,
+  ArrowRight, Check, Target, Settings,
 } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -38,6 +38,182 @@ interface StatProps {
   suffix: string;
   label: string;
   icon: React.ElementType;
+}
+
+// ─── Particle Canvas ──────────────────────────────────────────────────────────
+interface HeroParticle {
+  x: number; y: number; originX: number; originY: number;
+  vx: number; vy: number; size: number; color: string;
+}
+interface HeroBgParticle {
+  x: number; y: number; vx: number; vy: number;
+  size: number; alpha: number; phase: number;
+}
+
+const P_DENSITY = 0.00015;
+const BG_DENSITY = 0.00005;
+const MOUSE_R = 180;
+const RETURN_SPD = 0.08;
+const DAMP = 0.90;
+const REPULSION = 1.2;
+
+function ParticleCanvas() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<HeroParticle[]>([]);
+  const bgRef = useRef<HeroBgParticle[]>([]);
+  const mouseRef = useRef({ x: -1000, y: -1000, isActive: false });
+  const frameRef = useRef<number>(0);
+
+  const init = useCallback((w: number, h: number) => {
+    const count = Math.floor(w * h * P_DENSITY);
+    const ps: HeroParticle[] = [];
+    for (let i = 0; i < count; i++) {
+      const x = Math.random() * w, y = Math.random() * h;
+      const r = Math.random();
+      ps.push({
+        x, y, originX: x, originY: y, vx: 0, vy: 0,
+        size: Math.random() * 1.5 + 1,
+        color: r > 0.88 ? '#2563eb' : r > 0.75 ? '#06b6d4' : '#ffffff',
+      });
+    }
+    particlesRef.current = ps;
+
+    const bgCount = Math.floor(w * h * BG_DENSITY);
+    const bgs: HeroBgParticle[] = [];
+    for (let i = 0; i < bgCount; i++) {
+      bgs.push({
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.2, vy: (Math.random() - 0.5) * 0.2,
+        size: Math.random() + 0.5, alpha: Math.random() * 0.3 + 0.1,
+        phase: Math.random() * Math.PI * 2,
+      });
+    }
+    bgRef.current = bgs;
+  }, []);
+
+  const animate = useCallback((time: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Pulsing radial glow
+    const pulse = Math.sin(time * 0.0008) * 0.03 + 0.07;
+    const cx = canvas.width / 2, cy = canvas.height / 2;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(canvas.width, canvas.height) * 0.7);
+    grad.addColorStop(0, `rgba(37,99,235,${pulse})`);
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Background twinkle particles
+    ctx.fillStyle = '#ffffff';
+    for (const p of bgRef.current) {
+      p.x = (p.x + p.vx + canvas.width) % canvas.width;
+      p.y = (p.y + p.vy + canvas.height) % canvas.height;
+      const twinkle = Math.sin(time * 0.002 + p.phase) * 0.5 + 0.5;
+      ctx.globalAlpha = p.alpha * (0.3 + 0.7 * twinkle);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    const ps = particlesRef.current;
+    const mouse = mouseRef.current;
+
+    // Mouse repulsion + spring return
+    for (const p of ps) {
+      const dx = mouse.x - p.x, dy = mouse.y - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (mouse.isActive && dist < MOUSE_R && dist > 0) {
+        const force = ((MOUSE_R - dist) / MOUSE_R) * REPULSION;
+        p.vx -= (dx / dist) * force * 5;
+        p.vy -= (dy / dist) * force * 5;
+      }
+      p.vx += (p.originX - p.x) * RETURN_SPD;
+      p.vy += (p.originY - p.y) * RETURN_SPD;
+    }
+
+    // Collision resolution
+    for (let i = 0; i < ps.length; i++) {
+      for (let j = i + 1; j < ps.length; j++) {
+        const a = ps[i], b = ps[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const distSq = dx * dx + dy * dy;
+        const minD = a.size + b.size;
+        if (distSq < minD * minD) {
+          const d = Math.sqrt(distSq) || 0.01;
+          const nx = dx / d, ny = dy / d;
+          const overlap = (minD - d) * 0.5;
+          a.x -= nx * overlap; a.y -= ny * overlap;
+          b.x += nx * overlap; b.y += ny * overlap;
+          const dot = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+          if (dot > 0) {
+            const imp = -(1.85 * dot) / (1 / a.size + 1 / b.size);
+            a.vx += imp * nx / a.size; a.vy += imp * ny / a.size;
+            b.vx -= imp * nx / b.size; b.vy -= imp * ny / b.size;
+          }
+        }
+      }
+    }
+
+    // Draw
+    for (const p of ps) {
+      p.vx *= DAMP; p.vy *= DAMP;
+      p.x += p.vx; p.y += p.vy;
+      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      const op = Math.min(0.3 + speed * 0.1, 1);
+      if (p.color === '#2563eb') ctx.fillStyle = `rgba(37,99,235,${Math.min(op + 0.3, 1)})`;
+      else if (p.color === '#06b6d4') ctx.fillStyle = `rgba(6,182,212,${Math.min(op + 0.3, 1)})`;
+      else ctx.fillStyle = `rgba(255,255,255,${op})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    frameRef.current = requestAnimationFrame(animate);
+  }, []);
+
+  useEffect(() => {
+    const resize = () => {
+      const el = containerRef.current, c = canvasRef.current;
+      if (!el || !c) return;
+      const { width, height } = el.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      c.width = width * dpr; c.height = height * dpr;
+      c.style.width = `${width}px`; c.style.height = `${height}px`;
+      const ctx = c.getContext('2d');
+      if (ctx) ctx.scale(dpr, dpr);
+      init(width, height);
+    };
+    window.addEventListener('resize', resize);
+    resize();
+    return () => window.removeEventListener('resize', resize);
+  }, [init]);
+
+  useEffect(() => {
+    frameRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [animate]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-0 z-0 overflow-hidden cursor-crosshair"
+      onMouseMove={(e) => {
+        const rect = containerRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top, isActive: true };
+      }}
+      onMouseLeave={() => { mouseRef.current.isActive = false; }}
+    >
+      <canvas ref={canvasRef} className="block w-full h-full" />
+    </div>
+  );
 }
 
 // ─── FadeIn wrapper ───────────────────────────────────────────────────────────
@@ -85,8 +261,167 @@ function SectionLabel({
   );
 }
 
+// ─── Contact Modal ────────────────────────────────────────────────────────────
+function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    if (open) {
+      document.addEventListener("keydown", onKey);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open, onClose]);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSent(true);
+    setForm({ name: "", email: "", phone: "", message: "" });
+    setTimeout(() => { setSent(false); onClose(); }, 3000);
+  }
+
+  const inputCls =
+    "w-full px-4 py-3 rounded-xl border border-white/[0.10] bg-white/[0.06] text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#2563eb]/60 focus:bg-white/[0.09] transition-all duration-200";
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+        >
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/72 backdrop-blur-md" onClick={onClose} />
+
+          {/* Card */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.93, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.93, y: 20 }}
+            transition={{ duration: 0.28, ease: [0.21, 0.47, 0.32, 0.98] }}
+            className="relative w-full max-w-lg bg-[#080f1c]/96 backdrop-blur-xl rounded-3xl border border-white/[0.12] shadow-2xl shadow-black/60 overflow-hidden"
+          >
+            {/* Top shimmer line */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#2563eb]/60 to-transparent" />
+
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              aria-label="Закрыть"
+              className="absolute top-4 right-4 w-8 h-8 rounded-xl bg-white/[0.07] hover:bg-white/[0.14] border border-white/[0.10] flex items-center justify-center text-gray-400 hover:text-white transition-all duration-200 cursor-pointer z-10"
+            >
+              <X size={15} />
+            </button>
+
+            <div className="p-8">
+              <div className="mb-6">
+                <div className="text-xs font-semibold uppercase tracking-widest text-[#06b6d4] mb-2">
+                  Связаться с нами
+                </div>
+                <h2 className="text-2xl font-bold text-white">Оставьте заявку</h2>
+                <p className="text-gray-500 text-sm mt-1">
+                  Эксперт свяжется с вами в течение рабочего дня
+                </p>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {sent ? (
+                  <motion.div
+                    key="success"
+                    initial={{ opacity: 0, scale: 0.94 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="text-center py-10"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
+                      <Check size={24} className="text-green-400" />
+                    </div>
+                    <h3 className="text-white font-bold text-lg mb-1">Заявка отправлена!</h3>
+                    <p className="text-gray-400 text-sm">Мы свяжемся с вами в ближайшее время.</p>
+                  </motion.div>
+                ) : (
+                  <motion.form
+                    key="form"
+                    initial={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onSubmit={handleSubmit}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-gray-400 text-xs mb-1.5">Имя *</label>
+                        <input
+                          type="text"
+                          placeholder="Иван Иванов"
+                          value={form.name}
+                          onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                          required
+                          className={inputCls}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 text-xs mb-1.5">Email</label>
+                        <input
+                          type="email"
+                          placeholder="ivan@company.kz"
+                          value={form.email}
+                          onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                          required
+                          className={inputCls}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-gray-400 text-xs mb-1.5">Телефон *</label>
+                      <input
+                        type="tel"
+                        placeholder="+7 (___) ___-__-__"
+                        value={form.phone}
+                        onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+                        className={inputCls}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-gray-400 text-xs mb-1.5">Сообщение</label>
+                      <textarea
+                        rows={3}
+                        placeholder="Опишите вашу задачу или вопрос..."
+                        value={form.message}
+                        onChange={(e) => setForm((p) => ({ ...p, message: e.target.value }))}
+                        className={`${inputCls} resize-none`}
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 cursor-pointer"
+                    >
+                      Отправить заявку
+                    </button>
+                    <p className="text-gray-600 text-xs text-center">
+                      Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
+                    </p>
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 // ─── Navbar ───────────────────────────────────────────────────────────────────
-function Navbar() {
+function Navbar({ onContact }: { onContact: () => void }) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -141,12 +476,12 @@ function Navbar() {
         </nav>
 
         <div className="hidden md:block">
-          <a
-            href="#contact"
+          <button
+            onClick={onContact}
             className="px-5 py-2.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-sm font-medium rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 cursor-pointer"
           >
             Связаться с нами
-          </a>
+          </button>
         </div>
 
         <button
@@ -178,13 +513,12 @@ function Navbar() {
                   {l.label}
                 </a>
               ))}
-              <a
-                href="#contact"
-                onClick={() => setOpen(false)}
-                className="mt-2 px-5 py-3 bg-[#2563eb] text-white text-sm font-medium rounded-xl text-center cursor-pointer"
+              <button
+                onClick={() => { setOpen(false); onContact(); }}
+                className="mt-2 px-5 py-3 bg-[#2563eb] text-white text-sm font-medium rounded-xl text-center cursor-pointer w-full"
               >
                 Связаться
-              </a>
+              </button>
             </div>
           </motion.div>
         )}
@@ -197,32 +531,9 @@ function Navbar() {
 function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background layers */}
-      <div className="absolute inset-0 hero-grid opacity-50 pointer-events-none" />
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[#2563eb]/8 blur-[140px]" />
-        <div className="absolute top-1/4 right-[10%] w-[350px] h-[350px] rounded-full bg-[#06b6d4]/6 blur-[100px]" />
-        <div className="absolute bottom-1/4 left-[5%] w-[250px] h-[250px] rounded-full bg-[#C9A961]/5 blur-[80px]" />
-      </div>
+      <ParticleCanvas />
 
-      {/* Floating orbs */}
-      <motion.div
-        animate={{ y: [0, -18, 0], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-36 right-[18%] w-3 h-3 rounded-full bg-[#06b6d4] pointer-events-none"
-      />
-      <motion.div
-        animate={{ y: [0, 16, 0], opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-        className="absolute top-56 left-[22%] w-2 h-2 rounded-full bg-[#2563eb] pointer-events-none"
-      />
-      <motion.div
-        animate={{ y: [0, -12, 0], opacity: [0.3, 0.6, 0.3] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 3 }}
-        className="absolute bottom-44 right-[28%] w-4 h-4 rounded-full bg-[#C9A961]/50 pointer-events-none"
-      />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-24">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-24">
         <div className="max-w-4xl">
           {/* Badge */}
           <motion.div
@@ -282,25 +593,7 @@ function HeroSection() {
             </a>
           </motion.div>
 
-          {/* Quick stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
-            className="flex flex-wrap gap-10 pt-6 border-t border-white/8"
-          >
-            {[
-              { value: "13+", label: "Крупных клиентов" },
-              { value: "50+", label: "Реализованных проектов" },
-              { value: "99.98%", label: "Uptime ЦОД" },
-              { value: "СНГ", label: "Охват рынка" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="text-2xl font-bold text-white">{s.value}</div>
-                <div className="text-xs text-gray-500 mt-0.5">{s.label}</div>
-              </div>
-            ))}
-          </motion.div>
+ 
         </div>
       </div>
 
@@ -575,37 +868,6 @@ function StatsSection() {
 }
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
-const CASE_STUDIES = [
-  {
-    title: "E-library",
-    category: "Образование",
-    desc: "Автоматизация библиотечных фондов более 1000 школ. Мониторинг перемещения литературы и контроль дефицита/профицита книг.",
-    result: "100М₸ экономии / год",
-    color: "#2563eb",
-  },
-  {
-    title: "E-Portfolio",
-    category: "Образование",
-    desc: "Электронная аттестация педагогов. 6 лет работы, 8.53/10 оценка пользователей, более 100 000 педагогов прошли аттестацию.",
-    result: "200К+ пользователей",
-    color: "#06b6d4",
-  },
-  {
-    title: "ЦОД Transtelecom",
-    category: "Инфраструктура",
-    desc: "9 дата-центров по Казахстану. Общая площадь >8400 м², 800+ серверных стоек. Сертификат TIER III Uptime Institute.",
-    result: "99.98% Uptime",
-    color: "#C9A961",
-  },
-  {
-    title: "AI Video Analytics",
-    category: "Безопасность",
-    desc: "Видеоаналитика для правоохранительных органов. Распознавание лиц, номеров ТС, мониторинг перекрёстков и периметра.",
-    result: "35–50% раскрываемость",
-    color: "#10b981",
-  },
-];
-
 const CLIENTS = [
   "World Bank", "KazAtomProm", "KazakhTelecom", "ЕНПФ",
   "KazMunayGas", "Baiterek", "KazTransOil", "Transtelecom",
@@ -614,74 +876,43 @@ const CLIENTS = [
 
 function ProjectsSection() {
   return (
-    <section id="projects" className="py-28 relative">
+    <section id="projects" className="py-20 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d1b2e]/30 to-transparent pointer-events-none" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-        <FadeIn className="text-center mb-16">
-          <SectionLabel color="gold">Наши проекты</SectionLabel>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Опыт внедрения{" "}
-            <span className="text-[#06b6d4]">цифровых решений</span>
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Реализованные проекты в государственных структурах, банках и национальных компаниях
-          </p>
-        </FadeIn>
 
-        {/* Cases */}
-        <div className="grid sm:grid-cols-2 gap-5 mb-20">
-          {CASE_STUDIES.map((c, i) => (
-            <FadeIn key={c.title} delay={i * 0.1}>
-              <div className="group relative p-7 rounded-2xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/[0.14] transition-all duration-300 hover:-translate-y-1 cursor-pointer h-full flex flex-col">
-                <div
-                  className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl"
-                  style={{
-                    background: `linear-gradient(90deg, transparent, ${c.color}80, transparent)`,
-                  }}
-                />
-                <div className="flex items-start justify-between gap-4 mb-4">
-                  <div>
-                    <span
-                      className="text-xs font-medium px-2.5 py-1 rounded-lg mb-2 inline-block"
-                      style={{ background: `${c.color}20`, color: c.color }}
-                    >
-                      {c.category}
-                    </span>
-                    <h3 className="text-white font-bold text-xl mt-1">{c.title}</h3>
-                  </div>
-                  <div
-                    className="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex-shrink-0"
-                    style={{ background: `${c.color}18`, color: c.color }}
-                  >
-                    {c.result}
-                  </div>
-                </div>
-                <p className="text-gray-400 text-sm leading-relaxed flex-1">{c.desc}</p>
-                <div className="flex items-center gap-1.5 mt-5 text-gray-600 group-hover:text-gray-300 transition-colors text-sm">
-                  <span>Подробнее</span>
-                  <ChevronRight size={14} />
-                </div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-
-        {/* Clients grid */}
+        {/* Clients marquee */}
         <FadeIn>
-          <p className="text-gray-600 text-sm text-center mb-6">Нам доверяют ведущие организации</p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
-            {CLIENTS.map((c, i) => (
-              <motion.div
-                key={c}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
-                className="p-3 rounded-xl border border-white/[0.07] bg-white/[0.03] text-center text-gray-500 hover:text-gray-300 hover:border-white/[0.14] hover:bg-white/[0.06] transition-all duration-200 cursor-pointer text-xs font-medium"
-              >
-                {c}
-              </motion.div>
-            ))}
+          <p className="text-gray-600 text-xs font-semibold uppercase tracking-widest text-center mb-8">
+            Нам доверяют ведущие организации
+          </p>
+          <div className="relative overflow-hidden space-y-3">
+            {/* Edge fade masks */}
+            <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#050d1a] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#050d1a] to-transparent z-10 pointer-events-none" />
+
+            {/* Row 1 — left to right */}
+            <div className="flex gap-3 w-max marquee-fwd">
+              {[...CLIENTS, ...CLIENTS].map((name, i) => (
+                <div
+                  key={i}
+                  className="px-5 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-gray-500 hover:text-white hover:border-[#2563eb]/40 hover:bg-[#2563eb]/8 transition-all duration-200 whitespace-nowrap text-sm font-medium cursor-default"
+                >
+                  {name}
+                </div>
+              ))}
+            </div>
+
+            {/* Row 2 — right to left, reversed order */}
+            <div className="flex gap-3 w-max marquee-rev">
+              {[...[...CLIENTS].reverse(), ...[...CLIENTS].reverse()].map((name, i) => (
+                <div
+                  key={i}
+                  className="px-5 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.04] text-gray-500 hover:text-white hover:border-[#06b6d4]/40 hover:bg-[#06b6d4]/8 transition-all duration-200 whitespace-nowrap text-sm font-medium cursor-default"
+                >
+                  {name}
+                </div>
+              ))}
+            </div>
           </div>
         </FadeIn>
       </div>
@@ -1017,7 +1248,7 @@ function ContactSection() {
                       </div>
                       <div>
                         <label htmlFor="cf-email" className="block text-gray-400 text-xs mb-2">
-                          Email *
+                          Email 
                         </label>
                         <input
                           id="cf-email"
@@ -1032,7 +1263,7 @@ function ContactSection() {
                     </div>
                     <div>
                       <label htmlFor="cf-phone" className="block text-gray-400 text-xs mb-2">
-                        Телефон
+                        Телефон *
                       </label>
                       <input
                         id="cf-phone"
@@ -1045,7 +1276,7 @@ function ContactSection() {
                     </div>
                     <div>
                       <label htmlFor="cf-message" className="block text-gray-400 text-xs mb-2">
-                        Сообщение *
+                        Сообщение 
                       </label>
                       <textarea
                         id="cf-message"
@@ -1163,9 +1394,11 @@ function Footer() {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
   return (
     <div className="min-h-screen bg-[#050d1a] text-white">
-      <Navbar />
+      <ContactModal open={modalOpen} onClose={() => setModalOpen(false)} />
+      <Navbar onContact={() => setModalOpen(true)} />
       <HeroSection />
       <AboutSection />
       <ServicesSection />

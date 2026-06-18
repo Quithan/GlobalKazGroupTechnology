@@ -46,6 +46,19 @@ body {
   background-clip: text;
 }
 
+/* Infinite marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+.marquee-fwd { animation: marquee 30s linear infinite; }
+.marquee-rev { animation: marquee-reverse 24s linear infinite; }
+.marquee-fwd:hover, .marquee-rev:hover { animation-play-state: paused; }
+
 /* Gold gradient text */
 .text-gold {
   background: linear-gradient(135deg, #C9A961, #e8c97a);
