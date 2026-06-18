@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { useRef, useState, useEffect, useCallback } from "react";
 import {
@@ -477,14 +478,15 @@ function Navbar({ onContact }: { onContact: () => void }) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-3 cursor-pointer">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] flex items-center justify-center font-bold text-white text-sm shadow-lg shadow-blue-500/30 flex-shrink-0">
-            GKG
-          </div>
-          <div className="leading-tight">
-            <div className="text-white font-semibold text-sm">GlobalKazGroup</div>
-            <div className="text-[#06b6d4] text-xs">Technology</div>
-          </div>
+        <a href="#" className="flex items-center cursor-pointer">
+          <Image
+            src="/logo-white.png"
+            alt="GlobalKazGroup Technology"
+            width={140}
+            height={56}
+            className="h-12 w-auto object-contain"
+            priority
+          />
         </a>
 
         {/* Desktop nav */}
@@ -1395,14 +1397,14 @@ function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-14">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#2563eb] to-[#06b6d4] flex items-center justify-center font-bold text-white text-sm shadow-lg shadow-blue-500/25 flex-shrink-0">
-                GKG
-              </div>
-              <div>
-                <div className="text-white font-semibold text-sm">GlobalKazGroup Technology</div>
-                <div className="text-gray-600 text-xs">ТОО «GlobalKazGroup Technology»</div>
-              </div>
+            <div className="mb-5">
+              <Image
+                src="/logo-white.png"
+                alt="GlobalKazGroup Technology"
+                width={160}
+                height={64}
+                className="h-14 w-auto object-contain"
+              />
             </div>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
               Системный IT/AI интегратор полного цикла для B2G и B2B сегментов

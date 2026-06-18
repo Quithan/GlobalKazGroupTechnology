@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: "GlobalKazGroup Website <onboarding@resend.dev>",
+      from: "GlobalKazGroup Website <info@globalkazgrouptechnology.kz>",
       to: CONTACT_EMAIL,
       replyTo: email,
       subject: `Новая заявка от ${name.trim()}`,
