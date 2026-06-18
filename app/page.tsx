@@ -3,7 +3,7 @@
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { useRef, useState, useEffect, useCallback } from "react";
 import {
-  Shield, Database, Video, Server,
+  Shield, Bot, HeartPulse, GraduationCap, Camera, Layers, Server,
   Globe, Users, TrendingUp, Award, Building2,
   Mail, Phone, MapPin, Menu, X,
   Zap, BarChart3, FileText, Headphones, Mic,
@@ -265,12 +265,15 @@ function SectionLabel({
 function ContactModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     if (open) {
       document.addEventListener("keydown", onKey);
       document.body.style.overflow = "hidden";
+      setError("");
     }
     return () => {
       document.removeEventListener("keydown", onKey);
@@ -278,11 +281,29 @@ function ContactModal({ open, onClose }: { open: boolean; onClose: () => void })
     };
   }, [open, onClose]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSent(true);
-    setForm({ name: "", email: "", phone: "", message: "" });
-    setTimeout(() => { setSent(false); onClose(); }, 3000);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Ошибка отправки. Попробуйте позже.");
+        return;
+      }
+      setSent(true);
+      setForm({ name: "", email: "", phone: "", message: "" });
+      setTimeout(() => { setSent(false); onClose(); }, 3000);
+    } catch {
+      setError("Ошибка сети. Проверьте подключение и попробуйте снова.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputCls =
@@ -400,11 +421,15 @@ function ContactModal({ open, onClose }: { open: boolean; onClose: () => void })
                         className={`${inputCls} resize-none`}
                       />
                     </div>
+                    {error && (
+                      <p className="text-red-400 text-xs text-center">{error}</p>
+                    )}
                     <button
                       type="submit"
-                      className="w-full py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 cursor-pointer"
+                      disabled={loading}
+                      className="w-full py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 cursor-pointer"
                     >
-                      Отправить заявку
+                      {loading ? "Отправка..." : "Отправить заявку"}
                     </button>
                     <p className="text-gray-600 text-xs text-center">
                       Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
@@ -656,44 +681,74 @@ function AboutSection() {
             </div>
           </div>
 
-          {/* Right */}
+          {/* Right — Integration pipeline */}
           <FadeIn delay={0.3} className="hidden lg:block">
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#2563eb]/15 to-[#06b6d4]/8 rounded-3xl blur-2xl" />
-              <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-7">
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  {[
-                    { label: "Клиентов", value: "13+" },
-                    { label: "Проектов", value: "50+" },
-                    { label: "Пользователей", value: "200К+" },
-                    { label: "Лет опыта", value: "6+" },
-                  ].map((s) => (
-                    <div
-                      key={s.label}
-                      className="p-5 rounded-2xl bg-[#0d1b2e]/70 border border-white/[0.08] text-center"
-                    >
-                      <div className="text-3xl font-bold text-gradient mb-1">{s.value}</div>
-                      <div className="text-gray-500 text-xs">{s.label}</div>
-                    </div>
-                  ))}
+              <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-sm p-6 overflow-hidden">
+
+                {/* Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <span className="text-white text-sm font-semibold">Процесс интеграции</span>
+                  <span className="flex items-center gap-1.5 text-xs text-green-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    Live
+                  </span>
                 </div>
-                <div className="p-5 rounded-2xl bg-[#0d1b2e]/70 border border-white/[0.08]">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-                    <span className="text-gray-400 text-xs font-medium">Ключевые партнёры</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {["World Bank", "KazAtomProm", "KazMunayGas", "Baiterek", "Transtelecom"].map(
-                      (c) => (
-                        <span
-                          key={c}
-                          className="px-2.5 py-1 bg-white/[0.06] rounded-lg text-gray-400 text-xs border border-white/[0.08]"
-                        >
-                          {c}
-                        </span>
-                      )
+
+                {/* Steps */}
+                {([
+                  { icon: Target,   label: "Аудит процессов",  sub: "Анализ текущей инфраструктуры", color: "#2563eb",  done: true },
+                  { icon: Settings, label: "Проектирование",   sub: "Архитектура AI-решения",        color: "#06b6d4",  done: true },
+                  { icon: Zap,      label: "Внедрение ИИ",     sub: "Интеграция и настройка",        color: "#8b5cf6",  done: true },
+                  { icon: Globe,    label: "Поддержка 24/7",   sub: "Мониторинг и сопровождение",    color: "#10b981",  done: false },
+                ] as const).map((step, i, arr) => (
+                  <div key={step.label}>
+                    <div className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.04] transition-colors duration-150">
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ background: `${step.color}18`, border: `1px solid ${step.color}30` }}
+                      >
+                        <step.icon size={15} style={{ color: step.color }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white text-sm font-medium leading-tight">{step.label}</div>
+                        <div className="text-gray-500 text-xs mt-0.5">{step.sub}</div>
+                      </div>
+                      {step.done ? (
+                        <div className="w-5 h-5 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center flex-shrink-0">
+                          <Check size={10} className="text-green-400" />
+                        </div>
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-[#2563eb]/15 border border-[#2563eb]/30 flex items-center justify-center flex-shrink-0">
+                          <motion.div
+                            animate={{ scale: [1, 1.5, 1], opacity: [1, 0.4, 1] }}
+                            transition={{ duration: 1.4, repeat: Infinity }}
+                            className="w-1.5 h-1.5 rounded-full bg-[#2563eb]"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Animated connector */}
+                    {i < arr.length - 1 && (
+                      <div className="ml-[22px] relative h-4 w-px overflow-hidden">
+                        <div className="absolute inset-0 bg-white/[0.07]" />
+                        <motion.div
+                          className="absolute left-0 w-full h-3 rounded-full"
+                          style={{ background: `linear-gradient(to bottom, ${step.color}, ${arr[i + 1].color})` }}
+                          animate={{ y: [-12, 16] }}
+                          transition={{ duration: 1.1, repeat: Infinity, ease: "linear", delay: i * 0.32 }}
+                        />
+                      </div>
                     )}
                   </div>
+                ))}
+
+                {/* Status footer */}
+                <div className="mt-5 p-3.5 rounded-xl bg-[#0d1b2e]/70 border border-white/[0.07] flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb] animate-pulse flex-shrink-0" />
+                  <span className="text-gray-500 text-xs">99.98% uptime · Астана, Казахстан</span>
                 </div>
               </div>
             </div>
@@ -707,46 +762,46 @@ function AboutSection() {
 // ─── Services ─────────────────────────────────────────────────────────────────
 const SERVICES: ServiceCard[] = [
   {
-    icon: Zap,
+    icon: Bot,
     title: "AI Агенты",
-    desc: "Автоматизация задач, ускорение работы команд и полный контроль над данными через искусственный интеллект.",
+    desc: "Разработка интеллектуальных AI-агентов для автоматизации бизнес-процессов, обработки обращений, анализа данных и поддержки принятия решений.",
     color: "#2563eb",
-    tags: ["B2G", "B2B", "Автоматизация"],
+    tags: ["AI Agents", "LLM", "Автоматизация"],
   },
   {
-    icon: Shield,
-    title: "Compliance Agent",
-    desc: "Контроль соответствия документов международным стандартам ISO, ГОСТ, API, ASME с генерацией СОП.",
+    icon: HeartPulse,
+    title: "Цифровая медицина",
+    desc: "Цифровые платформы для медицинских учреждений, электронные сервисы, медицинская аналитика и решения на базе искусственного интеллекта.",
     color: "#06b6d4",
-    tags: ["ISO", "ГОСТ", "Аудит"],
+    tags: ["HealthTech", "AI", "Аналитика"],
   },
   {
-    icon: Mic,
-    title: "VoiceNote Agent",
-    desc: "Транскрибация аудио встреч с Teams, Zoom, Google Meet. Поддержка RU/KZ/UZ/EN языков.",
+    icon: GraduationCap,
+    title: "Aiqyn — Цифровое образование",
+    desc: "Современная образовательная экосистема для школ, колледжей и вузов с элементами искусственного интеллекта и цифрового контента.",
     color: "#8b5cf6",
-    tags: ["Teams", "Zoom", "ИИ"],
+    tags: ["EdTech", "AI", "Learning"],
   },
   {
-    icon: Database,
-    title: "Цифровой архив",
-    desc: "Оцифровка бумажных носителей, безопасное хранение и умный поиск — переход к электронному документообороту.",
-    color: "#C9A961",
-    tags: ["OCR", "Хранение", "Поиск"],
-  },
-  {
-    icon: Video,
-    title: "Видеоаналитика",
-    desc: "ИИ-видеонаблюдение 24/7: распознавание лиц, номеров ТС, контроль периметра и мониторинг событий.",
+    icon: Camera,
+    title: "Слаботочные системы и ИИ-видеоаналитика",
+    desc: "Проектирование и внедрение систем видеонаблюдения, контроля доступа, охранных комплексов и интеллектуальной видеоаналитики.",
     color: "#10b981",
-    tags: ["Безопасность", "ИИ", "24/7"],
+    tags: ["CCTV", "AI Vision", "Безопасность"],
   },
   {
     icon: Server,
-    title: "Центры обработки данных",
-    desc: "Строительство ЦОД под ключ. Сертификат TIER III Uptime Institute, 99.98% Uptime, более 800 стоек.",
+    title: "ЦОД и облачная инфраструктура",
+    desc: "Создание и модернизация центров обработки данных, серверной инфраструктуры и облачных платформ корпоративного уровня.",
     color: "#f59e0b",
-    tags: ["TIER III", "99.98%", "Под ключ"],
+    tags: ["Data Center", "Cloud", "Infrastructure"],
+  },
+  {
+    icon: Layers,
+    title: "ERP и цифровизация предприятий",
+    desc: "Внедрение ERP-систем, автоматизация бизнес-процессов и цифровая трансформация государственных и коммерческих организаций.",
+    color: "#C9A961",
+    tags: ["ERP", "Digitalization", "Enterprise"],
   },
 ];
 
@@ -1148,12 +1203,32 @@ function TeamSection() {
 function ContactSection() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSent(true);
-    setForm({ name: "", email: "", phone: "", message: "" });
-    setTimeout(() => setSent(false), 5000);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Ошибка отправки. Попробуйте позже.");
+        return;
+      }
+      setSent(true);
+      setForm({ name: "", email: "", phone: "", message: "" });
+      setTimeout(() => setSent(false), 5000);
+    } catch {
+      setError("Ошибка сети. Проверьте подключение и попробуйте снова.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   const inputCls =
@@ -1288,11 +1363,15 @@ function ContactSection() {
                         className={`${inputCls} resize-none`}
                       />
                     </div>
+                    {error && (
+                      <p className="text-red-400 text-xs text-center">{error}</p>
+                    )}
                     <button
                       type="submit"
-                      className="w-full py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 cursor-pointer"
+                      disabled={loading}
+                      className="w-full py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 cursor-pointer"
                     >
-                      Отправить заявку
+                      {loading ? "Отправка..." : "Отправить заявку"}
                     </button>
                     <p className="text-gray-600 text-xs text-center">
                       Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
