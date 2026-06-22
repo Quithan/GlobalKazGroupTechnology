@@ -590,7 +590,7 @@ function HeroSection() {
             className="text-lg sm:text-xl text-gray-400 mb-10 max-w-2xl leading-relaxed"
           >
             GlobalKazGroup Technology — интегратор полного цикла. Внедряем AI-решения,
-            ERP/CRM системы и цифровую инфраструктуру для B2G и B2B сегментов.
+            цифровую инфраструктуру для B2G и B2B сегментов.
           </motion.p>
 
           {/* CTAs */}
@@ -923,7 +923,6 @@ function StatsSection() {
 // To add a client: drop a PNG/SVG into public/clients/ and add an entry below.
 // Use white or light-coloured logos — they display best on the dark background.
 const CLIENTS: { name: string; file: string }[] = [
-  { name: "World Bank",              file: "world-bank.png" },
   { name: "KazAtomProm",             file: "kazatomprom.png" },
   { name: "KazakhTelecom",           file: "kazakhtelecom.png" },
   { name: "ЕНПФ",                    file: "enpf.png" },
@@ -1386,7 +1385,6 @@ function Footer() {
                 { label: "О компании", href: "#about" },
                 { label: "Проекты", href: "#projects" },
                 { label: "AI Агенты", href: "#agents" },
-                { label: "Команда", href: "#team" },
                 { label: "Контакты", href: "#contact" },
               ].map((s) => (
                 <a
@@ -1401,19 +1399,9 @@ function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-white/[0.06] pt-7 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="border-t border-white/[0.06] pt-7 text-center">
           <div className="text-gray-600 text-xs">
             © 2025 GlobalKazGroup Technology. Все права защищены.
-          </div>
-          <div className="flex gap-6">
-            {["Политика конфиденциальности", "Условия использования"].map((s) => (
-              <span
-                key={s}
-                className="text-gray-600 hover:text-gray-400 text-xs cursor-pointer transition-colors"
-              >
-                {s}
-              </span>
-            ))}
           </div>
         </div>
       </div>
