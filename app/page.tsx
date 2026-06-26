@@ -471,15 +471,15 @@ function Navbar({ onContact }: { onContact: () => void }) {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-0 flex items-center justify-between h-fit">
         {/* Logo */}
         <a href="#" className="flex items-center cursor-pointer">
           <Image
-            src="/logo.png"
+            src="/logo-white.png"
             alt="GlobalKazGroup Technology"
-            width={280}
-            height={200}
-            className="h-12 w-auto object-contain"
+            width={1080}
+            height={600}
+            className="h-20 w-auto object-contain"
             priority
           />
         </a>
@@ -999,44 +999,44 @@ function ProjectsSection() {
 // ─── AI Agents ────────────────────────────────────────────────────────────────
 const AGENTS: Agent[] = [
   {
-    name: "AI Compliance",  
+    name: "Аудитор Стандартов",
     icon: Shield,
-    short: "Контроль стандартов",
     desc: "Автоматизирует контроль соответствия корпоративных документов международным и отраслевым нормам (ISO, ГОСТ, API, ASME) с генерацией стандартных операционных процедур.",
     results: ["Снижение рисков несоответствия на 70%", "Готовность к аудитам 24/7", "Автоматическая генерация СОП"],
+    short: ""
   },
   {
-    name: "AI VoiceNote",
+    name: "Ассистент Встреч",
     icon: Mic,
-    short: "Протоколы встреч",
+    short: "",
     desc: "Первый AI-ассистент для рабочих встреч с полноценной поддержкой русского и других языков. Транскрибация аудио с Teams, Zoom, Google Meet.",
     results: ["Поддержка RU / KZ / UZ / EN", "Структурированные саммари встреч", "Хранение в едином пространстве"],
   },
   {
-    name: "AI ServiceHub",
+    name: "Помощник Поддержки",
     icon: Headphones,
-    short: "Автоматизация поддержки",
+    short: "",
     desc: "Агент для автоматизации поддержки и обработки запросов в службу поддержки. Чат-бот 24/7, triage тикетов, генерация ответов на частые обращения.",
     results: ["Работа 24/7 без перерывов", "Автоматический triage тикетов", "Снижение нагрузки на 60%"],
   },
   {
-    name: "AI Signal",
+    name: "Медиа мониторинг",
     icon: TrendingUp,
-    short: "Мониторинг медиа",
+    short: "",
     desc: "Интеллектуальная система мониторинга информационного поля в режиме 24/7. Поиск по ключевым словам, выявление деструктивного контента и угроз.",
     results: ["Мониторинг СМИ и соцсетей", "Выявление угроз безопасности", "Аналитика и отчёты"],
   },
   {
-    name: "AI LegalHub",
+    name: "Юрист-Консультант",
     icon: FileText,
-    short: "Юридические решения",
+    short: "",
     desc: "Агент для обработки жалоб и проверки документов в соответствии с нормативами, законами и технической спецификацией. Проверка договоров.",
     results: ["Проверка договоров", "Сверка с НПА и регламентами", "Подготовка проектов ответов"],
   },
   {
-    name: "AI Reports",
+    name: "Автогенератор Отчётов",
     icon: BarChart3,
-    short: "Автогенерация отчётов",
+    short: "",
     desc: "Агент для генерации драфтовых и шаблонных PDF-отчётов на основе ваших данных. Интеграция с существующими системами учёта.",
     results: ["PDF-отчёты по шаблонам", "Интеграция с BI-системами", "Автоматическое расписание"],
   },
@@ -1348,9 +1348,9 @@ function Footer() {
               <Image
                 src="/logo-white.png"
                 alt="GlobalKazGroup Technology"
-                width={160}
-                height={64}
-                className="h-14 w-auto object-contain"
+                width={9160}
+                height={9640}
+                className="h-40 w-auto object-contain"
               />
             </div>
             <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
