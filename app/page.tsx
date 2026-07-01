@@ -565,7 +565,7 @@ function HeroSection() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#2563eb]/30 bg-[#2563eb]/10 text-[#06b6d4] text-sm font-medium mb-8"
           >
             <Zap size={14} />
-            Системный IT/AI интегратор СНГ
+            Системный IT/AI интегратор
           </motion.div>
 
           {/* Heading */}
@@ -588,9 +588,7 @@ function HeroSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
             className="text-lg sm:text-xl text-gray-400 mb-10 max-w-2xl leading-relaxed"
-          >
-            GlobalKazGroup Technology — интегратор полного цикла. Внедряем AI-решения,
-            цифровую инфраструктуру для B2G и B2B сегментов.
+          >.
           </motion.p>
 
           {/* CTAs */}
@@ -604,7 +602,7 @@ function HeroSection() {
               href="#services"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-200 cursor-pointer"
             >
-              Наши решения
+              Трансформация
               <ArrowRight size={18} />
             </a>
             <a
@@ -745,7 +743,7 @@ function AboutSection() {
                 {/* Status footer */}
                 <div className="mt-5 p-3.5 rounded-xl bg-[#0d1b2e]/70 border border-white/[0.07] flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-[#2563eb] animate-pulse flex-shrink-0" />
-                  <span className="text-gray-500 text-xs">99.98% uptime · Астана, Казахстан</span>
+                  <span className="text-gray-500 text-xs"> · Астана, Казахстан</span>
                 </div>
               </div>
             </div>
@@ -898,7 +896,7 @@ function StatItem({ value, suffix, label, icon: Icon }: StatProps) {
 const STATS: StatProps[] = [
   { value: 13, suffix: "+", label: "Крупных клиентов", icon: Users },
   { value: 50, suffix: "+", label: "Реализованных проектов", icon: Award },
-  { value: 200, suffix: "К+", label: "Пользователей систем", icon: TrendingUp },
+  { value: 59, suffix: "К+", label: "Пользователей систем", icon: TrendingUp },
   { value: 5, suffix: "+", label: "Лет на рынке", icon: Server },
 ];
 
