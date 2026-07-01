@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion, useInView, AnimatePresence } from "motion/react";
 import { useRef, useState, useEffect, useCallback } from "react";
+import TechnologyShowcase, { type TechVideo } from "./components/TechnologyShowcase";
 import {
   Shield, Bot, Factory, HeartPulse, GraduationCap, Camera, Server,
   Globe, Users, TrendingUp, Award, Building2,
@@ -994,6 +995,55 @@ function ProjectsSection() {
   );
 }
 
+// ─── Corporate Agents Hero ───────────────────────────────────────────────────
+const CORP_PARTICLES = [
+  {x:8,y:15,d:3.8,dl:0.0},{x:92,y:8,d:4.2,dl:0.7},{x:5,y:72,d:3.5,dl:1.3},
+  {x:82,y:86,d:4.6,dl:0.4},{x:45,y:3,d:5.0,dl:1.8},{x:96,y:48,d:3.2,dl:0.9},
+  {x:2,y:55,d:4.4,dl:2.2},{x:68,y:97,d:3.8,dl:0.6},{x:78,y:20,d:4.8,dl:1.1},
+  {x:20,y:40,d:3.6,dl:0.3},{x:52,y:1,d:4.1,dl:1.6},{x:35,y:94,d:3.4,dl:2.5},
+  {x:97,y:68,d:4.5,dl:0.2},{x:12,y:32,d:3.9,dl:1.7},{x:72,y:12,d:4.3,dl:0.8},
+];
+const CA_FEATURES = [
+  { label: "Документооборот",    sub: "Автоматизация обработки, согласования и контроля" },
+  { label: "Обработка обращений",sub: "Интеллектуальный ответ на запросы 24/7" },
+  { label: "Аналитика данных",   sub: "Генерация инсайтов в реальном времени" },
+  { label: "Поддержка решений",  sub: "На основе данных и моделей ИИ" },
+];
+const CA_TAGS = ["AI Agents", "Automation", "Enterprise AI"];
+
+const SVG_CX = 50, SVG_CY = 31;
+const CORP_SATS = [
+  {
+    svgX: 50, svgY: 10, cssLeft: "50%", cssTop: "16.1%",
+    label: "Документооборот", color: "#2563eb", Icon: FileText,
+    stat: "2.4k", statSub: "в день",
+    labelPos: { bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", textAlign: "center" } as React.CSSProperties,
+    pktDelays: [0, 1.1, 2.2],
+  },
+  {
+    svgX: 85, svgY: 31, cssLeft: "85%", cssTop: "50%",
+    label: "Аналитика данных", color: "#06b6d4", Icon: BarChart3,
+    stat: "99.1%", statSub: "точность",
+    labelPos: { left: "calc(100% + 10px)", top: "50%", transform: "translateY(-50%)", textAlign: "left" } as React.CSSProperties,
+    pktDelays: [0.4, 1.5, 2.6],
+  },
+  {
+    svgX: 50, svgY: 52, cssLeft: "50%", cssTop: "83.9%",
+    label: "Обращения", color: "#8b5cf6", Icon: Headphones,
+    stat: "<1с", statSub: "ответ",
+    labelPos: { top: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", textAlign: "center" } as React.CSSProperties,
+    pktDelays: [0.8, 1.9, 3.0],
+  },
+  {
+    svgX: 15, svgY: 31, cssLeft: "15%", cssTop: "50%",
+    label: "Поддержка решений", color: "#10b981", Icon: Target,
+    stat: "94%", statSub: "эффект.",
+    labelPos: { right: "calc(100% + 10px)", top: "50%", transform: "translateY(-50%)", textAlign: "right" } as React.CSSProperties,
+    pktDelays: [1.0, 2.1, 3.2],
+  },
+];
+
+
 // ─── AI Agents ────────────────────────────────────────────────────────────────
 const AGENTS: Agent[] = [
   {
@@ -1145,6 +1195,35 @@ function AgentsSection() {
     </section>
   );
 }
+
+// ─── Technology Showcase videos ──────────────────────────────────────────────
+const TECH_VIDEOS: TechVideo[] = [
+  {
+    title: "",
+    description: "",
+    video: "/videos/Korp AI.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/Education.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/Medicine.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/COD.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/SVN.mp4",
+  },
+];
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
 function ContactSection() {
@@ -1417,6 +1496,7 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <ServicesSection />
+      <TechnologyShowcase videos={TECH_VIDEOS} />
       <AgentsSection />
       <StatsSection />
       <ProjectsSection />

@@ -59,6 +59,24 @@ body {
 .marquee-rev { animation: marquee-reverse 24s linear infinite; }
 .marquee-fwd:hover, .marquee-rev:hover { animation-play-state: paused; }
 
+/* ── Hide ALL native browser video controls ──────────────────────────────── */
+.ts-video::-webkit-media-controls,
+.ts-video::-webkit-media-controls-enclosure,
+.ts-video::-webkit-media-controls-panel,
+.ts-video::-webkit-media-controls-overlay-play-button,
+.ts-video::-webkit-media-controls-play-button,
+.ts-video::-webkit-media-controls-timeline,
+.ts-video::-webkit-media-controls-current-time-display,
+.ts-video::-webkit-media-controls-time-remaining-display,
+.ts-video::-webkit-media-controls-mute-button,
+.ts-video::-webkit-media-controls-volume-slider,
+.ts-video::-webkit-media-controls-fullscreen-button,
+.ts-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  -webkit-appearance: none;
+}
+.ts-video { -webkit-media-controls: none !important; }
+
 /* Gold gradient text */
 .text-gold {
   background: linear-gradient(135deg, #C9A961, #e8c97a);
