@@ -928,7 +928,7 @@ const CLIENTS: { name: string; file: string }[] = [
   { name: "mvd_rk",                  file: "mvd_rk.png" },
   { name: "KazTransOil",             file: "kaztransoil.png" },
   { name: "DP_Atyrau",               file: "DP_Atyrau.jpg" },
-  { name: "Қазақстан Темір Жолы",    file: "KTZH.jpg" },
+  { name: "Қазақстан Темір Жолы",    file: "ktj.png" },
   { name: "Medicine_Abai",           file: "Medicine_Abai.png" },
   { name: "Education_Abai",           file: "Education_Abai.jpg" },
   { name: "Education_PVL",           file: "Education_PVL.png" },
@@ -1483,7 +1483,7 @@ function Footer() {
 
         <div className="border-t border-white/[0.06] pt-7 text-center">
           <div className="text-gray-600 text-xs">
-            © 2025 GlobalKazGroup Technology. Все права защищены.
+            © 2026 GlobalKazGroup Technology. Все права защищены.
           </div>
         </div>
       </div>
