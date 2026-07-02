@@ -455,7 +455,7 @@ function Navbar({ onContact }: { onContact: () => void }) {
 
   const links = [
     { href: "#about", label: "О компании" },
-    { href: "#services", label: "Услуги" },
+    { href: "#showcase", label: "Услуги" },
     { href: "#projects", label: "Проекты" },
     { href: "#agents", label: "AI Агенты" },
     { href: "#contact", label: "Контакты" },
