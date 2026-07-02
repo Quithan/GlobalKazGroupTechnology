@@ -923,7 +923,7 @@ function StatsSection() {
 // Use white or light-coloured logos — they display best on the dark background.
 const CLIENTS: { name: string; file: string }[] = [
   { name: "KazAtomProm",             file: "kazatomprom.png" },
-  { name: "Kazakhmys",               file: "kazakhmys.png" },
+  { name: "Kazakhmys",               file: "Kazakhmys.png" },
   { name: "CONN",                    file: "CONN.jpg" },
   { name: "mvd_rk",                  file: "mvd_rk.png" },
   { name: "KazTransOil",             file: "kaztransoil.png" },
