@@ -658,9 +658,9 @@ function AboutSection() {
             </FadeIn>
             <FadeIn delay={0.2}>
               <p className="text-gray-400 text-lg leading-relaxed mb-8">
-                ТОО «GlobalKazGroup Technology» — системный интегратор полного цикла,
+                ТОО «GlobalKazGroup Technology» — системный интегратор полного цикла IT услуг,
                 специализирующийся на внедрении решений в области искусственного
-                интеллекта, цифровизации предприятий и автоматизации в секторах IT.
+                интеллекта, цифровизации предприятий и автоматизации в сфере ИКТ.
               </p>
             </FadeIn>
             <div className="grid sm:grid-cols-2 gap-3">
@@ -925,14 +925,11 @@ const CLIENTS: { name: string; file: string }[] = [
   { name: "KazAtomProm",             file: "kazatomprom.png" },
   { name: "Kazakhmys",               file: "kazakhmys.png" },
   { name: "CONN",                    file: "CONN.jpg" },
-  { name: "KazMunayGas",             file: "kazmunaygas.png" },
   { name: "mvd_rk",                  file: "mvd_rk.png" },
   { name: "KazTransOil",             file: "kaztransoil.png" },
   { name: "DP_Atyrau",               file: "DP_Atyrau.jpg" },
   { name: "Қазақстан Темір Жолы",    file: "ktj.png" },
   { name: "Medicine_Abai",           file: "Medicine_Abai.png" },
-  { name: "Lokomotiv",               file: "Lokomotiv.jpg" },
-  { name: "Минобразования РК",       file: "minobr-rk.png" },
 ];
 
 function ClientLogo({ client, accent }: { client: { name: string; file: string }; accent: string }) {
