@@ -600,7 +600,7 @@ function HeroSection() {
             className="flex flex-wrap gap-4 mb-16"
           >
             <a
-              href="#services"
+              href="#showcase"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-200 cursor-pointer"
             >
               Трансформация
@@ -1201,7 +1201,7 @@ const TECH_VIDEOS: TechVideo[] = [
   {
     title: "",
     description: "",
-    video: "/videos/Korp AI.mp4",
+    video: "/videos/Medicine.mp4",
   },
   {
     title: "",
@@ -1211,7 +1211,12 @@ const TECH_VIDEOS: TechVideo[] = [
   {
     title: "",
     description: "",
-    video: "/videos/Medicine.mp4",
+    video: "/videos/Korp AI.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/SVN.mp4",
   },
   {
     title: "",
@@ -1221,7 +1226,7 @@ const TECH_VIDEOS: TechVideo[] = [
   {
     title: "",
     description: "",
-    video: "/videos/SVN.mp4",
+    video: "/videos/Prom AI.mp4",
   },
 ];
 
@@ -1495,8 +1500,8 @@ export default function Home() {
       <Navbar onContact={() => setModalOpen(true)} />
       <HeroSection />
       <AboutSection />
-      <ServicesSection />
-      <TechnologyShowcase videos={TECH_VIDEOS} />
+      {/*<ServicesSection />*/}
+      <TechnologyShowcase videos={TECH_VIDEOS} id="showcase" />
       <AgentsSection />
       <StatsSection />
       <ProjectsSection />

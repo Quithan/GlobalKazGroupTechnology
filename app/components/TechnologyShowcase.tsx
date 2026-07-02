@@ -10,6 +10,7 @@ export interface TechVideo {
 
 interface Props {
   videos: TechVideo[];
+  id?: string;
 }
 
 const OFFSETS = [-2, -1, 0, 1, 2];
@@ -41,7 +42,7 @@ const PARTICLES = [
   { x: 55, y: 78, s: 1.9, o: 0.42, d: 3.3 },
 ];
 
-export default function TechnologyShowcase({ videos }: Props) {
+export default function TechnologyShowcase({ videos, id }: Props) {
   const n = videos.length;
   const sectionRef  = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -133,6 +134,7 @@ export default function TechnologyShowcase({ videos }: Props) {
 
   return (
     <section
+      id={id}
       ref={sectionRef}
       className="relative overflow-hidden py-20 lg:py-28"
       style={{ background: "linear-gradient(180deg,#050d1a 0%,#060e1e 50%,#050d1a 100%)" }}
@@ -191,7 +193,7 @@ export default function TechnologyShowcase({ videos }: Props) {
             </span>
           </div>
           <h2 className="mb-4 text-4xl font-bold tracking-tight text-white lg:text-5xl">
-            Наши{" "}
+            Комплексные{" "}
             <span
               style={{
                 background: "linear-gradient(135deg,#2563eb,#06b6d4)",
@@ -200,9 +202,9 @@ export default function TechnologyShowcase({ videos }: Props) {
                 backgroundClip: "text",
               }}
             >
-              Решения
+              цифровые
             </span>{" "}
-            в действии
+            решения
           </h2>
           <p className="mx-auto max-w-2xl text-base text-white/50 lg:text-lg">
             Передовые технологии искусственного интеллекта для трансформации вашего бизнеса
