@@ -14,7 +14,7 @@ interface Props {
 }
 
 const OFFSETS = [-2, -1, 0, 1, 2];
-const AUTO_INTERVAL = 8000;
+const AUTO_INTERVAL = 15000;
 
 // 3 matching shadow layers for smooth boxShadow interpolation
 const GLOW_ACTIVE =

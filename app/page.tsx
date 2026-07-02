@@ -603,7 +603,7 @@ function HeroSection() {
               href="#showcase"
               className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-200 cursor-pointer"
             >
-              Трансформация
+              Начать трансформацию
               <ArrowRight size={18} />
             </a>
             <a
@@ -923,15 +923,15 @@ function StatsSection() {
 // Use white or light-coloured logos — they display best on the dark background.
 const CLIENTS: { name: string; file: string }[] = [
   { name: "KazAtomProm",             file: "kazatomprom.png" },
-  { name: "KazakhTelecom",           file: "kazakhtelecom.png" },
-  { name: "ЕНПФ",                    file: "enpf.png" },
+  { name: "Kazakhmys",               file: "kazakhmys.png" },
+  { name: "CONN",                    file: "CONN.jpg" },
   { name: "KazMunayGas",             file: "kazmunaygas.png" },
-  { name: "Baiterek",                file: "baiterek.png" },
+  { name: "mvd_rk",                  file: "mvd_rk.png" },
   { name: "KazTransOil",             file: "kaztransoil.png" },
-  { name: "Transtelecom",            file: "transtelecom.png" },
-  { name: "Қазақстан Темір Жолы",   file: "ktj.png" },
-  { name: "МИД РК",                  file: "mid-rk.png" },
-  { name: "Минюст РК",               file: "minyust-rk.png" },
+  { name: "DP_Atyrau",               file: "DP_Atyrau.jpg" },
+  { name: "Қазақстан Темір Жолы",    file: "ktj.png" },
+  { name: "Medicine_Abai",           file: "Medicine_Abai.png" },
+  { name: "Lokomotiv",               file: "Lokomotiv.jpg" },
   { name: "Минобразования РК",       file: "minobr-rk.png" },
 ];
 
@@ -953,7 +953,7 @@ function ClientLogo({ client, accent }: { client: { name: string; file: string }
         alt={client.name}
         width={240}
         height={72}
-        className="object-contain h-16 w-auto brightness--70 opacity-80 group-hover:opacity-100 transition-opacity duration-200"
+        className="object-contain h-20 w-auto brightness--70 opacity-80 group-hover:opacity-100 transition-opacity duration-200"
       />
     </div>
   );
@@ -1201,22 +1201,12 @@ const TECH_VIDEOS: TechVideo[] = [
   {
     title: "",
     description: "",
-    video: "/videos/Medicine.mp4",
+    video: "/videos/Prom AI.mp4",
   },
-  {
-    title: "",
-    description: "",
-    video: "/videos/Education.mp4",
-  },
-  {
+   {
     title: "",
     description: "",
     video: "/videos/Korp AI.mp4",
-  },
-  {
-    title: "",
-    description: "",
-    video: "/videos/SVN.mp4",
   },
   {
     title: "",
@@ -1226,7 +1216,17 @@ const TECH_VIDEOS: TechVideo[] = [
   {
     title: "",
     description: "",
-    video: "/videos/Prom AI.mp4",
+    video: "/videos/SVN.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/Education.mp4",
+  },
+  {
+    title: "",
+    description: "",
+    video: "/videos/Medicine.mp4",
   },
 ];
 
